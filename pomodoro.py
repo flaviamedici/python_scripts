@@ -100,5 +100,15 @@ if __name__ == "__main__":
     run_pomodoro(args)
 
 
-#run command 
+#Some examples for commands to run in CMD
+# # Classic Pomodoro
+#python pomodoro.py
+
+# Deep focus mode
+#python pomodoro.py --focus 50 --short-break 10
+
+# Custom cycles
+#python pomodoro.py --cycles 3
+ 
+#another custom 
 #python pomodoro.py --focus 50 --short-break 10 --long-break 20 --cycles 4
