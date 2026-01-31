@@ -1,3 +1,7 @@
+#install dependencies
+# pip install pandas
+
+
 import pandas as pd
 import argparse
 import os

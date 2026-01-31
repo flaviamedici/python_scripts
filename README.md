@@ -11,6 +11,12 @@ run independently and includes setup instructions where needed.
 | `weatherstatus.py` | Prints current weather | `requests` |
 | `pomodoro.py` | Simple Pomodoro timer | no deps |
 | `webscraping.py` | Example web scraper | `requests`, `beautifulsoup4` |
+| `dailyhoroscope.py` | Print daily horoscope based on sign | no deps |
+| `dailyjournaling.py` | 
+| `dailymotivationSlack.py` | Send daily motivation quotes to a user via slack | `slack_sdk` |
+| `dailyreminders.py` |
+| `datamigration.py` | migrate data from one excel file to another | `pandas` |
+
 
 ## 🛠️ Setup
 

@@ -1,3 +1,7 @@
+# Install dependency
+# pip install slack_sdk
+
+
 import requests
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
