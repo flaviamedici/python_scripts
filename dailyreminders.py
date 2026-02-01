@@ -20,11 +20,6 @@ SCHEDULE = [
         "start": "14:00",
         "end": "15:00",
         "activity": "Study 📚"
-    },
-    {
-    "start": "09:00",
-    "end": "23:59",
-    "activity": "TEST — if you see this, it works ✅"
     }
 
 ]

@@ -16,6 +16,11 @@ run independently and includes setup instructions where needed.
 | `dailymotivationSlack.py` | Send daily motivation quotes to a user via slack | `slack_sdk` |
 | `dailyreminders.py` |
 | `datamigration.py` | migrate data from one excel file to another | `pandas` |
+| `fileOrganizer.py` | Organize my fiels based on extension | no deps |
+| `mealprep.py` | Create a weekly meal prep plan and ingredients to purchase based on pantry | no deps |
+| `pomodoro.py` | Pomodoro timer for CLI, can be modified | no deps |
+| `weatherstatus.py` | Fetches current weather and displays a message | `requests` |
+| `webscraping.py` | Saved headlines from cnn site to a csv file | |
 
 
 ## 🛠️ Setup
