@@ -25,6 +25,22 @@ SCHEDULE = [
 ]
 # -------------------------------------------
 
+def print_schedule(schedule):
+    print("📅 Today's Schedule:\n")
+    for block in schedule:
+        print(
+            f"{block['start'].strftime('%H:%M')} - "
+            f"{block['end'].strftime('%H:%M')} → "
+            f"{block['activity']}"
+        )
+    print()
+
+def next_block(now_time, schedule):
+    for block in schedule:
+        if now_time < block["start"]:
+            return block
+    return None
+
 def parse_time(value):
     hour, minute = map(int, value.split(":"))
     return dtime(hour, minute)
@@ -44,6 +60,7 @@ def is_within_block(now, start, end):
 
 def run_reminder(interval):
     schedule = build_schedule()
+    print_schedule(schedule)
 
     print("\n⏰ Daily Reminder CLI started")
     print("Press CTRL+C to stop\n")
@@ -75,9 +92,21 @@ def run_reminder(interval):
                     )
                     print(f"👉 {block['activity']}\n")
                     triggered_today.add(block_id)
+                    
+                now_time = datetime.now().time()
+                upcoming = next_block(now_time, schedule)
+
+                if upcoming:
+                    print(
+                        f"⏭️ Next up: "
+                        f"{upcoming['start'].strftime('%H:%M')} - "
+                        f"{upcoming['end'].strftime('%H:%M')} → "
+                        f"{upcoming['activity']}\n"
+                    )
+                    
 
             time.sleep(interval)
-
+    
     except KeyboardInterrupt:
         print("\n🛑 Reminder service stopped")
 
