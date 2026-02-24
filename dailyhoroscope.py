@@ -4,7 +4,7 @@ import tkinter as tk
 from tkinter import messagebox
 from datetime import datetime
 
-SIGN = "leo"  # change to your zodiac sign
+SIGN = "gemini"  # change to your zodiac sign
 
 URL = f"https://www.horoscope.com/us/horoscopes/general/horoscope-general-daily-today.aspx?sign={SIGN}"
 
