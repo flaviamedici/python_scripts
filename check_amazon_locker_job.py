@@ -1,5 +1,3 @@
-# file: check_amazon_locker_job.py
-
 import time
 from datetime import datetime
 
@@ -9,24 +7,29 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-from windows_toasts import Toast, WindowsToaster # <- Windows-Toasts library [web:27]
+from windows_toasts import Toast, WindowsToaster
 
 JOB_URL = "https://hiring.amazon.com/app#/jobSearch"
 TARGET_TITLE = "Locker+ Retail Associate"
 TIMEOUT = 30  # seconds
 
-# Create toaster once
-toaster = WindowsToaster("Amazon Job Checker")  # app name shown in notification [web:27]
+toaster = WindowsToaster("Amazon Job Checker")
+
 
 def notify_job_found():
-    """Show a Windows toast when the job is found."""
-    title = "Amazon job found"
-    message = f"'{TARGET_TITLE}' is available."
-    toast = ToastText2(title, message)
-    toaster.show_toast(toast)  # simple, blocking toast [web:27]
+    toast = Toast()
+    toast.text_fields = [
+        "Amazon job found",
+        f"'{TARGET_TITLE}' is available."
+    ]
+    toaster.show_toast(toast)
+
+
+from selenium.webdriver.common.keys import Keys
 
 def check_job():
     options = Options()
+    # While debugging, keep this commented so you can see the browser:
     options.add_argument("--headless=new")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
@@ -35,24 +38,66 @@ def check_job():
 
     try:
         driver.get(JOB_URL)
-
         wait = WebDriverWait(driver, TIMEOUT)
-        job_cards = wait.until(
-            EC.presence_of_all_elements_located(
-                (By.CSS_SELECTOR, "[data-testid='job-card'], .job-card, [class*='JobCard']")
+
+        # 1) Click the "I consent" button
+        try:
+            consent_button = wait.until(
+                EC.element_to_be_clickable(
+                    (By.CSS_SELECTOR, "button[data-test-id='consentBtn']")
+                )
+            )
+            consent_button.click()
+            print("Clicked 'I consent' button.")
+            time.sleep(1)
+        except Exception:
+            print("Could not click 'I consent' (not found or already accepted).")
+
+        # 2) Click the close (X) button on the consent card popup
+        try:
+            close_button = wait.until(
+                EC.element_to_be_clickable(
+                    (By.CSS_SELECTOR, "button[aria-label='Close cookie consent card popup']")
+                )
+            )
+            close_button.click()
+            print("Clicked close cookie consent popup.")
+            time.sleep(1)
+        except Exception:
+            print("Could not click close cookie consent popup (not found).")
+
+        # 3) Wait for search input to be present
+        search_input = wait.until(
+            EC.presence_of_element_located(
+                (
+                    By.CSS_SELECTOR,
+                    "input[data-test-component='StencilSearchFieldInput'][placeholder='Search jobs']",
+                )
             )
         )
 
+        # 4) Type the job title and press Enter
+        search_input.clear()
+        search_input.send_keys(TARGET_TITLE)
+        search_input.send_keys(Keys.ENTER)
+        print("Typed job title into search and pressed Enter.")
+        time.sleep(5)  # wait for results to update
+
+        # 5) Look for the job title text anywhere on the page
         found = False
-        for card in job_cards:
-            try:
-                title_el = card.find_element(By.CSS_SELECTOR, "h2, h3, [data-testid='job-title']")
-                title_text = title_el.text.strip()
-                if title_text == TARGET_TITLE:
-                    found = True
-                    break
-            except Exception:
-                continue
+        elements = driver.find_elements(
+            By.XPATH,
+            "//*[contains(normalize-space(text()), 'Locker+ Retail Associate')]",
+        )
+
+        print(f"Found {len(elements)} elements containing the text snippet.")
+
+        for el in elements:
+            txt = el.text.strip()
+            print("Candidate element text:", repr(txt))
+            if "Locker+ Retail Associate" in txt:
+                found = True
+                break
 
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -64,6 +109,9 @@ def check_job():
 
     finally:
         driver.quit()
+
+
+
 
 if __name__ == "__main__":
     check_job()
