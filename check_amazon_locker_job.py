@@ -9,23 +9,21 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-from windows_toasts import Toast, WindowsToaster  # <- correct import [web:27][web:22]
+from windows_toasts import Toast, WindowsToaster # <- Windows-Toasts library [web:27]
 
 JOB_URL = "https://hiring.amazon.com/app#/jobSearch"
 TARGET_TITLE = "Locker+ Retail Associate"
 TIMEOUT = 30  # seconds
 
 # Create toaster once
-toaster = WindowsToaster("Amazon Job Checker")
+toaster = WindowsToaster("Amazon Job Checker")  # app name shown in notification [web:27]
 
 def notify_job_found():
     """Show a Windows toast when the job is found."""
-    toast = Toast()
-    toast.text_fields = [
-        "Amazon job found",
-        f"'{TARGET_TITLE}' is available."
-    ]
-    toaster.show_toast(toast)
+    title = "Amazon job found"
+    message = f"'{TARGET_TITLE}' is available."
+    toast = ToastText2(title, message)
+    toaster.show_toast(toast)  # simple, blocking toast [web:27]
 
 def check_job():
     options = Options()
