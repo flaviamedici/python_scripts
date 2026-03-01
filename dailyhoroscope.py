@@ -1,32 +1,34 @@
 import requests
-from bs4 import BeautifulSoup
-import tkinter as tk
-from tkinter import messagebox
-from datetime import datetime
 
 SIGN = "gemini"  # change to your zodiac sign
 
-URL = f"https://www.horoscope.com/us/horoscopes/general/horoscope-general-daily-today.aspx?sign={SIGN}"
+BASE_URL = "https://freehoroscopeapi.com/api/v1/get-horoscope"
 
-def get_horoscope():
-    response = requests.get(URL, timeout=10)
+
+def fetch_horoscope(period):
+    """
+    period should be "daily", "weekly", or "monthly"
+    """
+    url = f"{BASE_URL}/{period}"
+    params = {"sign": SIGN}
+    response = requests.get(url, params=params, timeout=10)
     response.raise_for_status()
+    
+    data = response.json()
+    # Return the horoscope text or a fallback message
+    return data.get("horoscope", "No horoscope text in response.")
 
-    soup = BeautifulSoup(response.text, "html.parser")
-
-    horoscope_text = soup.find("div", class_="main-horoscope").p.text
-    return horoscope_text.strip()
-
-def show_popup(text):
-    root = tk.Tk()
-    root.withdraw()  # hide main window
-
-    today = datetime.now().strftime("%A, %B %d")
-    messagebox.showinfo(f"Your Horoscope – {today}", text)
 
 if __name__ == "__main__":
     try:
-        horoscope = get_horoscope()
-        show_popup(horoscope)
+        daily_horoscope = fetch_horoscope("daily")
+        weekly_horoscope = fetch_horoscope("weekly")
+        
+        print("\n🌟 DAILY HOROSCOPE 🌟")
+        print(daily_horoscope)
+        
+        print("\n🌙 WEEKLY HOROSCOPE 🌙")
+        print(weekly_horoscope)
+        
     except Exception as e:
-        show_popup("Could not load horoscope today 🌙\n\n" + str(e))
+        print("Error fetching horoscope:", str(e))
