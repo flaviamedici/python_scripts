@@ -15,6 +15,7 @@ run independently and includes setup instructions where needed.
 | `dailyjournaling.py` | 
 | `dailymotivationSlack.py` | Send daily motivation quotes to a user via slack | `slack_sdk` |
 | `dailyreminders.py` |
+| `dailystandupreminder.py` | Send reminders every hour to stand up and walk around |
 | `datamigration.py` | migrate data from one excel file to another | `pandas` |
 | `fileOrganizer.py` | Organize my fiels based on extension | no deps |
 | `mealprep.py` | Create a weekly meal prep plan and ingredients to purchase based on pantry | no deps |
