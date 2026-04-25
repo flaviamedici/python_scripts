@@ -3,20 +3,32 @@ from datetime import datetime
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+import os
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-from windows_toasts import Toast, WindowsToaster
+try:
+    from windows_toasts import Toast, WindowsToaster
+except ImportError:
+    Toast = None
+    WindowsToaster = None
 
 JOB_URL = "https://hiring.amazon.com/app#/jobSearch"
 TARGET_TITLE = "Locker+ Retail Associate"
 TIMEOUT = 30  # seconds
+CHECK_INTERVAL = 60  # seconds between checks
 
-toaster = WindowsToaster("Amazon Job Checker")
+toaster = None
+if WindowsToaster is not None:
+    toaster = WindowsToaster("Amazon Job Checker")
 
 
 def notify_job_found():
+    if toaster is None or Toast is None:
+        print(f"Job notification: '{TARGET_TITLE}' is available.")
+        return
+
     toast = Toast()
     toast.text_fields = [
         "Amazon job found",
@@ -107,11 +119,26 @@ def check_job():
         else:
             print(f"[{timestamp}] Job NOT found: {TARGET_TITLE}")
 
+    except Exception as exc:
+        print(f"ERROR during job check: {exc}", flush=True)
+        raise
     finally:
-        driver.quit()
+        if driver is not None:
+            driver.quit()
 
 
+def main():
+    print("Amazon job checker started.")
+    try:
+        while True:
+            try:
+                check_job()
+            except Exception as exc:
+                print(f"Unhandled exception: {exc}", flush=True)
+            time.sleep(CHECK_INTERVAL)
+    except KeyboardInterrupt:
+        print("Job checker stopped by user.")
 
 
 if __name__ == "__main__":
-    check_job()
+    main()
